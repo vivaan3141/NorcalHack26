@@ -88,11 +88,12 @@
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
         }
         
-        input[type="password"], select {
+        select {
             padding: 10px 15px;
             border-radius: 8px;
             border: 1px solid #e2e8f0;
             font-size: 0.9rem;
+            min-width: 200px;
         }
 
         #auditBtn {
@@ -135,14 +136,10 @@
             </svg>
             <span class="gemini-text">Gemini</span>
         </div>
-        <p>Your AI co-pilot for mastering assignments and meeting every rubric goal.</p>
+        <p>Expert assignment feedback without the manual setup.</p>
     </div>
 
     <div class="settings-bar">
-        <div>
-            <label style="margin-bottom: 5px;">API Key</label>
-            <input type="password" id="apiKeyInput" placeholder="Enter Gemini API Key">
-        </div>
         <div>
             <label style="margin-bottom: 5px;">Feedback Tone</label>
             <select id="toneSelect">
@@ -177,6 +174,9 @@
 
     <script type="module">
         import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
+
+        // EMBEDDED API KEY
+        const API_KEY = "AIzaSyBYxtGKWVKYGTAZbvkdaxlzZ1BvwSGKPq4";
 
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
         
@@ -215,17 +215,15 @@
         }
 
         auditBtn.onclick = async () => {
-            const key = document.getElementById('apiKeyInput').value.trim();
             const userPrompt = document.getElementById('promptInput').value;
             const tone = document.getElementById('toneSelect').value;
             let work = document.getElementById('workInput').value;
 
-            if (!key) return alert("Please enter your API Key.");
             if (!userPrompt) return alert("Please paste the assignment instructions.");
 
             auditBtn.disabled = true;
             output.style.display = "block";
-            output.innerHTML = `<div class="loading-spinner"> Clarify is reading your work as a ${tone} mentor...</div>`;
+            output.innerHTML = `<div class="loading-spinner"> Analyzing as a ${tone} mentor...</div>`;
 
             try {
                 if (filePicker.files.length > 0) {
@@ -234,10 +232,9 @@
 
                 if (!work) throw new Error("Please provide your work via text or file upload.");
 
-                const genAI = new GoogleGenerativeAI(key);
+                const genAI = new GoogleGenerativeAI(API_KEY);
                 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-                // AI instructions updated to use your tones
                 const finalPrompt = `
                     You are an academic expert. Give feedback in a ${tone} tone.
                     If the tone is "Chill", be like a helpful friend. 
@@ -250,7 +247,7 @@
                     STUDENT WORK:
                     ${work}
 
-                    Provide a structured review:
+                    Provide a structured review in Markdown:
                     1. **Met Requirements**
                     2. **Missing/Weak Elements**
                     3. **Growth Pointers** (8 actionable tips)
