@@ -1,7 +1,7 @@
 import { GoogleGenAI } from "@google/genai";
 
 // 1. Setup - Replace with your real key
-const API_KEY = "YOUR_GEMINI_API_KEY_HERE";
+const API_KEY = "AIzaSyCoDjQmr5GkdYD-UHv04EOoN0eSgPZtgyw";
 const genAI = new GoogleGenAI({ apiKey: API_KEY });
 
 const btn = document.getElementById('auditBtn');
